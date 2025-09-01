@@ -1,6 +1,7 @@
-# Proposal
+# PavementEye
+## Proposal
 
-## Introduction
+### Introduction
 
 Roads  are  the  most  widely  used  transportation method  around  the  world  at  present.  One  of the causes  of **accidents** on the roads  is road  **distresses[1]**. 
 
@@ -8,7 +9,7 @@ If left untreated,  road  distresses  will  degrade  the  ride quality and safet
 
 ---
 
-## Problem
+### Problem
 
 Roadsurface inspection is primarily based on visual observations by humans and quantitative analysis using expensive machines. Furthermore, it is timeconsuming. visual inspection tends to be inconsistent and unsustainable, which increases the risk associated with aging road infrastructure.[3] 
 
@@ -18,15 +19,15 @@ Roadsurface inspection is primarily based on visual observations by humans and q
 
 ---
 
-## Solution
+### Solution
 
 We propose developing an **automated data pipeline** for detecting, classifying, and geolocating road cracks and surface distresses using **computer vision** and **real-time data streaming**. The output will be visualized on a dashboard to assist urban planners and maintenance authorities in prioritizing repairs.
 
-### Goals
+#### Goals
 
 Improve road quality by applying cheap, sustainable and in an automated and fast manner. Reducing direct and indirect accidents caused by distresses. Making traffic in Egypt more resilient and reducing traffic congestion by eliminating distresses and cracks.
 
-### Steps
+#### Steps
 
 ![image.png](media/image%201.png)
 
@@ -50,7 +51,7 @@ Improve road quality by applying cheap, sustainable and in an automated and fast
     The dashboard will be used by **urban planners in Egypt** to easly detect roads that need to be repaired first.
     
 
-### Model and datasets we will use
+#### Model and datasets we will use
 
 | **Model** | **Link** | Notes | resource |
 | --- | --- | --- | --- |
@@ -68,13 +69,13 @@ We will convert this model to be able to run on flutter mobile application for r
 
 ---
 
-## Case study
+### Case study
 
 To prove our concept we will install a mobile phone on a bike or car that will have our developed flutter application on it. It will be supposed to detect cracks in roads and send the data. And the dash board will be updated.
 
 ---
 
-## Future work
+### Future work
 
 - Use saved images on HDFS to retrain the model every week for example
 - Take the project to larger scale (1000 vehicle)
@@ -82,13 +83,13 @@ To prove our concept we will install a mobile phone on a bike or car that will h
 
 ---
 
-## Team and Tasks
+### Team and Tasks
 
 ![image.png](media/image%203.png)
 
 ---
 
-## Reference
+### Reference
 
 [1] Huang, Y.-H., & Zhang, Q.-Y., “A review of the causes and
 effects of pavement distresses”, Construction and Building
