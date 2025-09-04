@@ -1,14 +1,13 @@
 import cv2
 import numpy as np
-import os
 
 # Load YOLOv2 model
 net = cv2.dnn.readNet(
-  './yolo v2/dpm-cfg/backup/yolo-dpm_final.weights', 
-  './yolo v2/cfg/yolo-dpm.cfg')
+  './yolo v2/yolo-dpm_final.weights', 
+  './yolo v2/yolo-dpm.cfg')
 
 # Load the COCO class labels
-with open('./yolo v2/cfg/dpm.names', 'r') as f:
+with open('./yolo v2/dpm.names', 'r') as f:
     classes = [line.strip() for line in f.readlines()]
 
 def detect(nparr):
@@ -25,7 +24,7 @@ def detect(nparr):
   # Run the model
   outputs = net.forward(output_layers)
 
-  # Flag to check if any object was detected
+  # to check if any object was detected
   labels = []
 
   # Process the outputs
