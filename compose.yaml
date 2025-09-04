@@ -102,6 +102,21 @@ services:
       - SPARK_SSL_ENABLED=no
     networks:
       - kafka-spark-network
+  
+  # Cassandra Service
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCassandraCluster
+      - CASSANDRA_DC=DC1
+      - CASSANDRA_RACK=Rack1
+    ports:
+      - "9042:9042"  # Cassandra query port
+    networks:
+      - kafka-spark-network
+    volumes:
+      - cassandra-data:/var/lib/cassandra  # Optional: persist Cassandra data
 
 networks:
   kafka-spark-network:
@@ -111,3 +126,4 @@ volumes:
   notebooks:
   data:
   scripts:
+  cassandra-data:
