@@ -52,3 +52,5 @@ INSERT INTO pavementeye.crack (
     45.764043,
     4.835659
 );
+
+select * from crack;

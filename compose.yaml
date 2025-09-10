@@ -58,7 +58,7 @@ services:
       - "4040:4040"
     environment:
       - SPARK_MASTER=local[*]
-      - PYSPARK_SUBMIT_ARGS=--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0 pyspark-shell
+      - PYSPARK_SUBMIT_ARGS=--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,com.datastax.spark:spark-cassandra-connector_2.12:3.5.1 pyspark-shell
     volumes:
       - ./notebooks:/home/jovyan/work
       - ./data:/home/jovyan/data
