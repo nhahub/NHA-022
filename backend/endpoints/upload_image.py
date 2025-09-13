@@ -31,7 +31,8 @@ def detect_endpoint():
       "lon": float(request.form.get("lon")),
       "lat": float(request.form.get("lat")),
       "time": datetime.now().isoformat(),
-      "labels": labels_list
+      "labels": labels_list,
+      # "image": # will be added ----------------------------------------------------------------
     }
 
     # Send data to kafka topic
