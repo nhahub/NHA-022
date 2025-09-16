@@ -2,6 +2,8 @@
 # the running cassandra container
 
 from cassandra.cluster import Cluster
+import geopandas as gpd
+import pandas as pd
 
 class Cassandra:
   def __init__(self, CASSANDRA_HOST='localhost', CASSANDRA_PORT=9042):
@@ -16,6 +18,8 @@ class Cassandra:
 
       # use our keyspace database
       self.session.set_keyspace('pavementeye')
+
+      self.data = None
       
       print("Cassnadra connected successfully !")
     except:
@@ -31,6 +35,22 @@ class Cassandra:
         row_dict = dict(row._asdict())
         data.append(row_dict)
 
-      return data
+      self.data = pd.DataFrame(data)
+
+      return self.data
     except:
       return "Error in the cassandra query"
+    
+  def join_roads(self):
+    roads_df = gpd.read_file('../data/egypt/alex_roads.geojson').to_crs(epsg=4326)
+
+    roads_df = roads_df\
+      .drop(['osm_id', 'code', 'ref'], axis=1)
+
+    roads_df['road_index'] = roads_df.index
+    joined = roads_df.merge(self.data, how='inner', left_on='road_index', right_on='road_index')
+
+    self.data = joined
+
+    return self.data
+

@@ -6,6 +6,11 @@ def get_cassandra():
   return Cassandra()
 
 cassandra = get_cassandra()
-data = cassandra.exec("SELECT * FROM crack")
+cassandra.exec("SELECT * FROM crack")
+data = cassandra.join_roads()
+
+st.title("Pavement eye")
+
+st.markdown("###### Data")
 st.dataframe(data)
 
