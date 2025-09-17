@@ -48,7 +48,8 @@ class Cassandra:
       .drop(['osm_id', 'code', 'ref'], axis=1)
 
     roads_df['road_index'] = roads_df.index
-    joined = roads_df.merge(self.data, how='inner', left_on='road_index', right_on='road_index')
+    joined = roads_df\
+      .merge(self.data, how='right', left_on='road_index', right_on='road_index')
 
     self.data = joined
 

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS crack (
   y1 double,
   x2 double,
   y2 double,
+  ppm double,
   PRIMARY KEY ((road_index), timestamp, id)
 ) WITH CLUSTERING ORDER BY (timestamp DESC);
 
