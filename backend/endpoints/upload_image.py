@@ -32,6 +32,7 @@ def detect_endpoint():
       "lat": float(request.form.get("lat")),
       "time": datetime.now().isoformat(),
       "labels": labels_list,
+      "ppm": float(request.form.get("ppm")), # pixel per meter
       # "image": # will be added ----------------------------------------------------------------
     }
 
