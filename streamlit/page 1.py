@@ -15,6 +15,7 @@ st.markdown("###### Last 10 cracks")
 st.dataframe(data)
 
 # ----------------------------------------------------------------------------------
+st.title("Percentage of each crack type")
 data1 = cassandra.exec("SELECT label FROM crack")
 
 fig, ax = plt.subplots(1, 1)

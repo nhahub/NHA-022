@@ -50,20 +50,22 @@ INSERT INTO crack (
   x1, 
   y1, 
   x2, 
-  y2
+  y2,
+  ppm
 ) VALUES (
-  uuid(),                  -- Unique ID (can use Python's uuid.uuid4())
-  1,                       -- Example road index
-  toTimestamp(now()),     -- Current timestamp
-  'longitudinal_crack',   -- Label
-  0.89,                   -- Confidence
-  'image_001.png',        -- Image name or path
-  77.5946,                -- Longitude
-  12.9716,                -- Latitude
-  125.4,                  -- x1
-  98.2,                   -- y1
-  200.6,                  -- x2
-  130.8                   -- y2
+  uuid(),                  
+  3693,                       
+  1752144000000,  -- Replace with your millis value from Python
+  'Alligator Crack',   
+  0.89,                   
+  'image_001.png',        
+  29.9882,                
+  31.25843,                
+  125.4,                  
+  98.2,                   
+  200.6,                  
+  130.8,                  
+  200
 );
 
 select * from crack;
