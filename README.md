@@ -1,4 +1,5 @@
 # PavementEye
+![PavementEye Logo](/media/Gemini_Generated_Image_ap7b8eap7b8eap7b.png)
 # Environemt Docker
 
 ### Running Docker containers (Kafka, PySaprk, Cassandra, Hadoop)
