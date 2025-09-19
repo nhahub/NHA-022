@@ -1,6 +1,49 @@
 # PavementEye
-![PavementEye Logo](/media/Gemini_Generated_Image_ap7b8eap7b8eap7b.png)
-# Environemt Docker
+
+<div align="center">
+  <img 
+  src="media/Gemini_Generated_Image_yldkbmyldkbmyldk.png" 
+  alt="PavementEye Logo" 
+  width="100"
+  style="border-radius: 50%; object-fit: cover;"
+  />
+</div>
+
+### What is PavementEye ?
+##### Introduction
+Roads  are  the  most  widely  used  transportation method  around  the  world  at  present.  One  of the causes  of accidents on the roads  is road  distresses [1]. 
+
+If left untreated,  road  distresses  will  degrade  the  ride quality and safety of motorists. They will also require costly  maintenance  and  repairs,  which  can  restrict traffic flow  and cause congestion. Therefore, timely maintenance is  essential  to keep  highways safe  and durable. [2]
+
+##### Problem
+
+Roadsurface inspection is primarily based on visual observations by humans and quantitative analysis using expensive machines. Furthermore, it is timeconsuming. visual inspection tends to be inconsistent and unsustainable, which increases the risk associated with aging road infrastructure.[3]
+
+##### Solution
+We propose developing an automated data pipeline for detecting, classifying, and geolocating road cracks and surface distresses using computer vision and real-time data streaming. The output is visualized on a dashboard to assist urban planners and maintenance authorities in prioritizing repairs.
+
+<div align="center">
+  <img 
+  src="media/Untitled design.png" 
+  alt="PavementEye Logo" 
+  width="80%"/>
+</div>
+
+### Data Pipeline
+<div align="center">
+  <img 
+  src="media/Flow Chart Whiteboard in Red Blue Basic Style.png" 
+  alt="PavementEye Logo" 
+  width="80%"
+  />
+</div>
+
+##### Goals
+
+Improve road quality by applying cheap, sustainable and in an automated and fast manner. Reducing direct and indirect accidents caused by distresses. Making traffic in Egypt(Alexandria) more resilient and reducing traffic congestion by eliminating distresses and cracks.
+
+
+## Steps to run the code
 
 ### Running Docker containers (Kafka, PySaprk, Cassandra, Hadoop)
 
@@ -33,18 +76,38 @@ docker compose stop
 
 ### Running the Flask API
 
-1. Clone the following repo:
+1. Download the trained Yolo v8 model from:
+https://github.com/oracl4/RoadDamageDetection/tree/main/models
 
-```powershell
-git clone https://github.com/TITAN-lab/Road-crack-detection.git
-```
+Put the model on its right path. and adjust other paths.
 
-1. Rename the directory to `yolo v2` and copy it to `backend` directory.
-2. Follow Download the trained Yolo v2 model from [https://drive.google.com/drive/folders/144Jlnt2xJSD3zuGG3mWtpkR0Gw1Xaxg1](https://drive.google.com/drive/folders/144Jlnt2xJSD3zuGG3mWtpkR0Gw1Xaxg1)
-3. Put the files you downloaded from dirve it its right location to match the paths in `model.py`  file.
-
+2. Download the required python libraries:
 ```powershell
 pip install -r requirements.txt
+```
+
+3. Run the backend **(Ensure that you ran the docker containers first)**
+```powershell
 cd backend
 python app.py
 ```
+
+4. To access the dashboard to see the visualizations:
+```powershell
+cd streamlit
+streamlit run "page 1.py"
+```
+
+## References
+[1]: Huang, Y.-H., & Zhang, Q.-Y., “A review of the causes and
+effects of pavement distresses”, Construction and Building
+Materials, Vol. 112, No. 1, pp. 294-305, 2016.
+
+[2]: Kulshreshtha, S., & Zhang, X., “Pavement distresses and
+their impact on pavement performance”, Journal of
+Transportation Engineering, Part B: Pavements, Vol. 143,
+No. 1, pp. 1-10, 2017.
+
+[3]: Road Damage Detection Using Deep Neural Networks with
+Images Captured Through a Smartphone, 2 Related Works
+2.1 Road Damage Detection, Page 2
