@@ -23,17 +23,24 @@ def detect_endpoint():
     # Convert the byte data to a NumPy array
     nparr = np.frombuffer(in_memory_image, np.uint8)
 
+    lon = float(request.form.get("lon"))
+    lat = float(request.form.get("lat"))
+    time = datetime.now().isoformat()
+    ppm = float(request.form.get("ppm"))
+
     # list of cracks and its confidence
-    labels_list = detect(nparr)
+    # lon, lat, time to be identifier for the image name
+    # that will be saved to the data lake
+    labels_list = detect(nparr, lon, lat, time)
 
     # Organize the data
     res = {
-      "lon": float(request.form.get("lon")),
-      "lat": float(request.form.get("lat")),
-      "time": datetime.now().isoformat(),
+      "lon": lon,
+      "lat": lat,
+      "time": time,
       "labels": labels_list,
-      "ppm": float(request.form.get("ppm")), # pixel per meter
-      # "image": # will be added ----------------------------------------------------------------
+      "ppm": ppm, # pixel per meter
+      "image": f"{lon}_{lat}_{time}.jpg" # image name in azure datalake in folder /raw
     }
 
     # Send data to kafka topic

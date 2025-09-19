@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
 from ultralytics import YOLO
+from upload_to_datalake import upload_to_datalake
 
 # Load the model (Yolo v8s)
 model = YOLO("../models/yolo v8/YOLOv8_Small_RDD.pt")
 
-def detect(nparr):
+def detect(nparr, lon, lat, time):
   # Decode the image using OpenCV
   image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -40,7 +41,13 @@ def detect(nparr):
   # if there is labels Save processed image with labels 
   # Will store in Azure data lake in the future
   if len(labels) > 0:
-    cv2.imwrite('./processed/output.jpg', image)
+    pass
+    # For local testing only
+    # cv2.imwrite('./processed/output.jpg', image)
+
+    # Successfully working
+    # Just uncomment on real prodction or simple tests to avoid wasting the free plan
+    # upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
 
   # Return whether any labels were detected
   return labels

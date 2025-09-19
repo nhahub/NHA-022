@@ -5,6 +5,17 @@ import json
 import matplotlib.pyplot as plt
 import contextily as ctx
 
+# Global styles -------------------------------------------------------------------
+st.set_page_config(layout="wide")
+
+# Load the external CSS file
+def local_css(file_name):
+  with open(file_name) as f:
+      st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("./style.css")
+# ---------------------------------------------------------------------------------
+
 cassandra = Cassandra()
 cassandra.exec("SELECT lon, lat, confidence FROM crack")
 data = cassandra.data
