@@ -1,16 +1,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_application_1">
 
-    <!-- ✅ Permissions must be inside <manifest>, but outside <application> -->
+    <!-- Required Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- Optional but useful -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- ⚠️ WRITE_EXTERNAL_STORAGE is deprecated on Android 10+ -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+
+    <!-- Optional for metadata access -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" /> -->
+
+    <!-- Optional: declare that camera is used, but not required -->
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
 
     <application
         android:label="flutter_application_1"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <!-- For legacy HTTP support (if needed) -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
         <activity
             android:name=".MainActivity"
@@ -32,17 +43,18 @@
             </intent-filter>
         </activity>
 
-        <!-- Flutter plugin registration -->
+        <!-- Flutter embedding version -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
 
-    <!-- Required to query activities for processing text -->
+    <!-- Optional query section for text processing -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
         </intent>
     </queries>
+
 </manifest>
