@@ -44,10 +44,7 @@ class Cassandra:
       return "Error in the cassandra query"
     
   def join_roads(self):
-    roads_df = gpd.read_file('../data/egypt/alex_roads.geojson').to_crs(epsg=4326)
-
-    roads_df = roads_df\
-      .drop(['osm_id', 'code', 'ref'], axis=1)
+    roads_df = gpd.read_file('../data/egypt/geo.geojson').to_crs(epsg=4326)
 
     roads_df['road_index'] = roads_df.index
     joined = roads_df\

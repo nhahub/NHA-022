@@ -18,7 +18,7 @@ local_css("style.css")
 cassandra = Cassandra()
 cassandra.exec("SELECT * FROM crack LIMIT 10")
 data = cassandra.join_roads()
-data = data.drop(['geometry', 'layer', 'index', 'road_index', 'id'], axis=1)
+data = data.drop(['geometry', 'index', 'road_index', 'id'], axis=1)
 
 st.title("Pavement eye 🛣️")
 
