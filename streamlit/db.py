@@ -68,8 +68,8 @@ class Cassandra:
     df = df.to_crs("EPSG:3857")
     df['road_length'] = df.geometry.length
 
-    # Assume road width = 7m
-    df['road_area'] = df['road_length'] * 7
+    # Assume road width = 10m
+    df['road_area'] = df['road_length'] * 10
 
     # Distress density (% of road area)
     df['dd'] = (df['crack_area'] / df['road_area']) * 100

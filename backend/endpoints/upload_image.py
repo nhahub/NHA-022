@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from model import detect
 import numpy as np
-# from kafka_producer import kafka_producer
+from kafka_producer import kafka_producer
 from datetime import datetime
 import json
 
@@ -44,8 +44,8 @@ def detect_endpoint():
     }
 
     # Send data to kafka topic
-    # kafka_producer.send('test', json.dumps(res))
-    # kafka_producer.flush()
+    kafka_producer.send('test', json.dumps(res))
+    kafka_producer.flush()
 
     # Response to the user
     return jsonify(res)
