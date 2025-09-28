@@ -11,7 +11,7 @@ def detect(nparr, lon, lat, time):
   image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
   # Run inference on a folder
-  results = model.predict(source=image, save=True, conf=0.25)
+  results = model.predict(source=image, conf=0.25)
 
   # to check if any object was detected
   labels = []
@@ -47,7 +47,7 @@ def detect(nparr, lon, lat, time):
 
     # Successfully working
     # Just uncomment on real prodction or simple tests to avoid wasting the free plan
-    # upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
+    upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
 
   # Return whether any labels were detected
   return labels
