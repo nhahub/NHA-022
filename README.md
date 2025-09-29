@@ -45,7 +45,7 @@ Improve road quality by applying cheap, sustainable and in an automated and fast
 
 ## Steps to run the code
 
-### Running Docker containers (Kafka, PySaprk, Cassandra, Hadoop)
+### Running Docker containers (Kafka, PySaprk, Cassandra)
 
 Clone the repository
 
@@ -79,7 +79,7 @@ docker compose stop
 1. Download the trained Yolo v8 model from:
 https://github.com/oracl4/RoadDamageDetection/tree/main/models
 
-Put the model on its right path. and adjust other paths.
+**Note:** Put the model in the right place: `models\yolo v8`
 
 2. Download the required python libraries:
 ```powershell
