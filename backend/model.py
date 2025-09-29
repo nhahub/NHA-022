@@ -11,7 +11,7 @@ def detect(nparr, lon, lat, time):
   image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
   # Run inference on a folder
-  results = model.predict(source=image, conf=0.25)
+  results = model.predict(source=image, conf=0.25, save=False)
 
   # to check if any object was detected
   labels = []
