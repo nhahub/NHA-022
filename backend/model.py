@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 from upload_to_datalake import upload_to_datalake
+from upload_to_osb import upload_to_s3_compatible
 
 # Load the model (Yolo v8s)
 model = YOLO("../models/yolo v8/YOLOv8_Small_RDD.pt")
@@ -46,8 +47,12 @@ def detect(nparr, lon, lat, time):
     # cv2.imwrite('./processed/output.jpg', image)
 
     # Successfully working
+    # If you want to push images that have cracks to Azure Data Lake
     # Just uncomment on real prodction or simple tests to avoid wasting the free plan
-    upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
+    # upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
+
+    # If you want to push images that have cracks to OBS
+    upload_to_s3_compatible(image, f'raw/{lon}_{lat}_{time}.jpg')
 
   # Return whether any labels were detected
   return labels
