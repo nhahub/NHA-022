@@ -20,11 +20,11 @@ If left untreated,  road  distresses  will  degrade  the  ride quality and safet
 Roadsurface inspection is primarily based on visual observations by humans and quantitative analysis using expensive machines. Furthermore, it is timeconsuming. visual inspection tends to be inconsistent and unsustainable, which increases the risk associated with aging road infrastructure.[3]
 
 ##### Solution
-We propose developing an automated data pipeline for detecting, classifying, and geolocating road cracks and surface distresses using computer vision and real-time data streaming. The output is visualized on a dashboard to assist urban planners and maintenance authorities in prioritizing repairs.
+We leverage our expertise in data science and data engineering to transform collected ideas and information into a comprehensive streaming data pipeline. This pipeline automatically collects images, processes them to detect cracks and classify their types using deep learning model, and performs data preprocessing. It enriches the analysis through integration with OpenStreetMap, enabling advanced geolocation insights. Images are stored in the cloud (data lake), while structured data is saved in a NoSQL database. All results are visualized in a unified dashboard, providing administrators with rapid, actionable insights. We called the application “Pavement Eye”.
 
 <div align="center">
   <img 
-  src="media/Untitled design.png" 
+  src="media/main.png" 
   alt="PavementEye Logo" 
   width="80%"/>
 </div>
