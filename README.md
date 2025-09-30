@@ -4,7 +4,7 @@
   <img 
   src="media/Gemini_Generated_Image_yldkbmyldkbmyldk.png" 
   alt="PavementEye Logo" 
-  width="100"
+  width="150"
   style="border-radius: 50%; object-fit: cover;"
   />
 </div>
@@ -26,7 +26,7 @@ We leverage our expertise in data science and data engineering to transform coll
   <img 
   src="media/main.png" 
   alt="PavementEye Logo" 
-  width="80%"/>
+  width="70%"/>
 </div>
 
 ### Data Pipeline
@@ -38,9 +38,27 @@ We leverage our expertise in data science and data engineering to transform coll
   />
 </div>
 
-##### Goals
+##### what Pavement-eye offers ?
 
-Improve road quality by applying cheap, sustainable and in an automated and fast manner. Reducing direct and indirect accidents caused by distresses. Making traffic in Egypt(Alexandria) more resilient and reducing traffic congestion by eliminating distresses and cracks.
+1. A fast, reliable, and sustainable method for automatically detecting cracks using image processing—reducing manual effort and operational costs.
+
+2. Utilizes persistent, fault-tolerant, and scalable storage solutions to manage various data types—including images, metadata, and analytics—ensuring high availability and data integrity.
+
+3. Incorporates detailed spatial data, such as road networks from OpenStreetMap, to enable precise geolocation analysis and identify areas where cracks frequently occur.
+
+4. Processes streaming data in real time, allowing immediate detection and classification of cracks for proactive infrastructure monitoring.
+
+5. A centralized dashboard provides administrators with real-time visual insights, enabling quick identification and localization of cracks across monitored regions.
+
+6. Automatically computes PCI to assess surface degradation and prioritize maintenance.
+
+<div align="center">
+  <img 
+  src="media/dashboard.png" 
+  alt="PavementEye Logo" 
+  width="80%"
+  />
+</div>
 
 
 ## Steps to run the code
@@ -79,7 +97,7 @@ docker compose stop
 1. Download the trained Yolo v8 model from:
 https://github.com/oracl4/RoadDamageDetection/tree/main/models
 
-**Note:** Put the model in the right place: `models\yolo v8`
+**Note:** Put the model in the right place: `models\yolo v8`. Then the file should be as `models/yolo v8/YOLOv8_Small_RDD.pt`.
 
 2. Download the required python libraries:
 ```powershell
@@ -92,11 +110,13 @@ cd backend
 python app.py
 ```
 
-4. To access the dashboard to see the visualizations:
+4. To access the dashboard to see the visualizations, In another terminal tab:
 ```powershell
 cd streamlit
 streamlit run "page 1.py"
 ```
+
+**Note:** If you want to test cloud storage for images please contact yahiamahmoood333@gmail.com to get access credentials that are in `.env` file.
 
 ## References
 [1]: Huang, Y.-H., & Zhang, Q.-Y., “A review of the causes and
