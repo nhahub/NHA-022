@@ -74,6 +74,10 @@ cd PavementEye
 
 Then to install docker images and run **for the first time.**
 
+**Note: If you get an error that indicates `bitnami/spark:latest` was removed from docker hub, just change `bitnami/spark:latest` to `bitnamilegacy/spark:latest` in `compose.yaml` in the part of spark-master and spark-worker.**
+
+You can read more information about that here: https://hub.docker.com/r/bitnami/spark
+
 ```powershell
 docker compose up
 ```

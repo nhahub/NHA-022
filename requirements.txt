@@ -9,11 +9,9 @@ botocore
 azure-storage-file-datalake
 matplotlib
 geopandas
-keplergl
 shapely
 pandas
 contextily
-pyspark
 streamlit
 plotly
 cassandra-driver
