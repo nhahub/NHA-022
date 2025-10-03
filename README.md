@@ -38,6 +38,8 @@ We leverage our expertise in data science and data engineering to transform coll
   />
 </div>
 
+As part of **"Huawei Developer Competition Northern Africa 2025"**, We used Huawei OBS and Huawei ECS, To use Huawei OBS other than Azure Data lake go to `backend/model.py` at the end of the file and uncomment or comment based on want you want to use (Azure data lake or Huawei OBS). The system was also deployed on both Huawei ECS and Azure VM.
+
 ##### what Pavement-eye offers ?
 
 1. A fast, reliable, and sustainable method for automatically detecting cracks using image processing—reducing manual effort and operational costs.
