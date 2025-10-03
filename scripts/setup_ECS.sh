@@ -1,7 +1,7 @@
 git clone https://github.com/yahia997/PavementEye.git
 cd PavementEye
-wget -O "models/yolo v8/YOLOv8_Small_RDD.pt" "https://github.com/oracl4/RoadDamageDetection/raw/refs/heads/main/models/YOLOv8_Small_RDD.pt"
 sudo apt-get update && sudo apt-get upgrade -y
+wget -O "models/yolo v8/YOLOv8_Small_RDD.pt" "https://github.com/oracl4/RoadDamageDetection/raw/refs/heads/main/models/YOLOv8_Small_RDD.pt"
 sudo apt-get install ca-certificates curl gnupg lsb-release -y
 sudo mkdir -p /etc/apt/keyrings # done
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg # done
