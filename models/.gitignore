@@ -1,2 +1,4 @@
 runs/
 /yolo v2
+**.pt
+**.tflite

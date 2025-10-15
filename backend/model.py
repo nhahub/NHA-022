@@ -52,7 +52,7 @@ def detect(nparr, lon, lat, time):
     # upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
 
     # If you want to push images that have cracks to OBS
-    upload_to_s3_compatible(image, f'raw/{lon}_{lat}_{time}.jpg')
+    # upload_to_s3_compatible(image, f'raw/{lon}_{lat}_{time}.jpg')
 
   # Return whether any labels were detected
   return labels

@@ -4,29 +4,29 @@ import numpy as np
 from kafka_producer import kafka_producer
 from datetime import datetime
 import json
+import base64
 
-def detect_endpoint():
-
-  # Check if image is in request
-  if 'image' not in request.files:
-    return jsonify({'error': 'No image part in the request'}), 400
-  
-  file = request.files['image']
-
-  # Check if a file was actually selected
-  if file.filename == '':
-    return jsonify({'error': 'No file selected'}), 400
+def detect_endpoint(data):
   
   try:
-    in_memory_image = file.read()
+    # prepare comming base64 images for the model
+    base64_string = data['img']
+        
+    # Remove data URL prefix if present
+    if base64_string.startswith('data:image'):
+      base64_string = base64_string.split(',')[1]
+        
+    # 1. Decode base64 to bytes
+    image_bytes = base64.b64decode(base64_string)
+        
+    # 2. Convert bytes to numpy array
+    nparr = np.frombuffer(image_bytes, np.uint8)
 
-    # Convert the byte data to a NumPy array
-    nparr = np.frombuffer(in_memory_image, np.uint8)
-
-    lon = float(request.form.get("lon"))
-    lat = float(request.form.get("lat"))
+    # prepare other metadata
+    lon = float(data["lon"])
+    lat = float(data["lat"])
+    ppm = float(data["ppm"])
     time = datetime.now().isoformat()
-    ppm = float(request.form.get("ppm"))
 
     # list of cracks and its confidence
     # lon, lat, time to be identifier for the image name
@@ -45,10 +45,9 @@ def detect_endpoint():
 
     # Send data to kafka topic
     kafka_producer.send('test', json.dumps(res))
-    kafka_producer.flush()
 
     # Response to the user
-    return jsonify(res)
+    return res
   
   except Exception as e:
-    return jsonify({'error': str(e)}), 500
+    return {'error': str(e)}

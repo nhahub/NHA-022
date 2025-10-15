@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_application_1/widgets/settings.dart';
-import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
+import '../services/socket_service.dart';
 
 class CameraCapturePage extends StatefulWidget {
   @override
@@ -29,11 +29,48 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
   File? _latestImageFile;
   int _captureCount = 0;
 
+  // ✅ Add Socket Service
+  final SocketService _socketService = SocketService();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initialize();
+    
+    // ✅ Listen for WebSocket responses
+    _setupSocketListeners();
+  }
+
+  // ✅ Setup WebSocket response listeners
+  void _setupSocketListeners() {
+    _socketService.responseStream.listen((response) {
+      print('📨 Received WebSocket response: $response');
+      
+      // Update UI based on server response
+      if (response['status'] == 'success') {
+        setState(() {
+          _uploadStatus = "✅ Processed successfully!";
+          if (response['data'] != null) {
+            _imageName = response['data']['image'] ?? '';
+            _labels = List<String>.from(response['data']['labels'] ?? []);
+          }
+        });
+      } else if (response['status'] == 'error') {
+        setState(() {
+          _uploadStatus = "❌ Server error: ${response['error']}";
+        });
+      }
+    });
+
+    _socketService.connectionStream.listen((isConnected) {
+      print('🔗 Connection status changed: $isConnected');
+      if (!isConnected && _isTimerRunning) {
+        setState(() {
+          _uploadStatus = "❌ WebSocket disconnected";
+        });
+      }
+    });
   }
 
   @override
@@ -41,6 +78,7 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
     WidgetsBinding.instance.removeObserver(this);
     _stopTimer();
     _controller?.dispose();
+    _socketService.disconnect(); // ✅ Dispose socket connection
     super.dispose();
   }
 
@@ -53,69 +91,24 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
   }
 
   void _handleSettingsChange(SettingsProvider settingsProvider) {
+    // ✅ Connect to WebSocket when settings change
+    _connectToWebSocket(settingsProvider.api);
+    
     if (settingsProvider.isRunning && !_isTimerRunning) {
-      // Start timer if it's not running but should be
       _startCaptureTimer();
     } else if (!settingsProvider.isRunning && _isTimerRunning) {
-      // Stop timer if it's running but shouldn't be
       _stopTimer();
     } else if (_isTimerRunning && _timer != null) {
-      // Restart timer if rate changed
       _restartTimerWithNewRate();
     }
   }
 
-  void _restartTimerWithNewRate() {
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-    print('🔄 Restarting timer with new rate: ${settingsProvider.rate}s');
-    _stopTimer();
-    _startCaptureTimer();
-  }
-
-  void _stopTimer() {
-    if (_timer != null) {
-      _timer!.cancel();
-      _timer = null;
-      _isTimerRunning = false;
-      print('⏹️ Timer stopped');
+  // ✅ New method to connect to WebSocket
+  void _connectToWebSocket(String url) {
+    if (url.isNotEmpty) {
+      print('🔄 Connecting to WebSocket: $url');
+      _socketService.connect(url);
     }
-  }
-
-  void _startCaptureTimer() {
-    if (_isTimerRunning) {
-      _stopTimer();
-    }
-
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-    
-    if (!settingsProvider.isRunning) {
-      print('⏸️ Camera not running - not starting timer');
-      return;
-    }
-
-    if (_controller == null || !_controller!.value.isInitialized) {
-      print('📷 Camera not ready - not starting timer');
-      return;
-    }
-
-    print('🔄 Starting capture timer with interval: ${settingsProvider.rate}s');
-    
-    // Don't capture immediately - wait for the first interval
-    _timer = Timer.periodic(
-      Duration(seconds: settingsProvider.rate),
-      (timer) {
-        _takePictureAndSendMultipart();
-      },
-    );
-    
-    _isTimerRunning = true;
-    
-    // Take first picture after a short delay instead of immediately
-    Future.delayed(Duration(milliseconds: 500), () {
-      if (_isTimerRunning) {
-        _takePictureAndSendMultipart();
-      }
-    });
   }
 
   Future<void> _initialize() async {
@@ -160,10 +153,71 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
     }
   }
 
-  Future<void> _takePictureAndSendMultipart() async {
+  void _restartTimerWithNewRate() {
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    print('🔄 Restarting timer with new rate: ${settingsProvider.rate}s');
+    _stopTimer();
+    _startCaptureTimer();
+  }
+
+  void _stopTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+      _isTimerRunning = false;
+      print('⏹️ Timer stopped');
+    }
+  }
+
+  void _startCaptureTimer() {
+    if (_isTimerRunning) {
+      _stopTimer();
+    }
+
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    
+    if (!settingsProvider.isRunning) {
+      print('⏸️ Camera not running - not starting timer');
+      return;
+    }
+
+    if (_controller == null || !_controller!.value.isInitialized) {
+      print('📷 Camera not ready - not starting timer');
+      return;
+    }
+
+    print('🔄 Starting capture timer with interval: ${settingsProvider.rate}s');
+    
+    _timer = Timer.periodic(
+      Duration(seconds: settingsProvider.rate),
+      (timer) {
+        _takePictureAndSendWebSocket(); // ✅ Changed to WebSocket method
+      },
+    );
+    
+    _isTimerRunning = true;
+    
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (_isTimerRunning) {
+        _takePictureAndSendWebSocket(); // ✅ Changed to WebSocket method
+      }
+    });
+  }
+
+  // ✅ REPLACED: New WebSocket method instead of HTTP multipart
+  Future<void> _takePictureAndSendWebSocket() async {
     if (_controller == null ||
         !_controller!.value.isInitialized ||
         _controller!.value.isTakingPicture) {
+      return;
+    }
+
+    // ✅ Check WebSocket connection
+    if (!_socketService.isConnected) {
+      setState(() {
+        _uploadStatus = "❌ WebSocket not connected";
+      });
+      print('⚠️ WebSocket not connected - skipping capture');
       return;
     }
 
@@ -191,48 +245,47 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
       // Get current settings
       final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
 
-      // 🌐 Prepare multipart request
-      var uri = Uri.parse(settingsProvider.api);
-
-      var request = http.MultipartRequest('POST', uri);
-      request.files.add(
-        await http.MultipartFile.fromPath('image', imageFile.path),
-      );
-      request.fields['lon'] = position.longitude.toString();
-      request.fields['lat'] = position.latitude.toString();
-      request.fields['ppm'] = settingsProvider.ppm.toString();
+      // ✅ Convert image to base64
+      List<int> imageBytes = await imageFile.readAsBytes();
+      String base64Image = base64Encode(imageBytes);
+      
+      // ✅ Use the format you specified: without data URL prefix
+      String imageData = base64Image; // Just base64, no "data:image/..." prefix
 
       setState(() {
-        _uploadStatus = "🔄 Uploading image...";
+        _uploadStatus = "🔄 Sending via WebSocket...";
       });
 
-      var response = await request.send();
-      String respStr = await response.stream.bytesToString();
-      print('📥 Response status: ${response.statusCode}');
-      print('📥 Response body: $respStr');
+      // ✅ Send via WebSocket instead of HTTP
+      _socketService.sendImageData(
+        imageData, // Base64 string without prefix
+        position.longitude,
+        position.latitude,
+        settingsProvider.ppm,
+      );
 
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(respStr);
-        setState(() {
-          _uploadStatus = "✅ Upload successful!";
-          _imageName = decoded['image'] ?? '';
-          _labels = List<String>.from(decoded['labels'] ?? []);
-        });
-      } else {
-        setState(() {
-          _uploadStatus = "❌ Upload failed (${response.statusCode})";
-          _imageName = '';
-          _labels = [];
-        });
-      }
+      setState(() {
+        _uploadStatus = "✅ Sent via WebSocket!";
+        _imageName = "${position.longitude.toStringAsFixed(4)}_${position.latitude.toStringAsFixed(4)}_${DateTime.now().millisecondsSinceEpoch}.jpg";
+      });
+
     } catch (e) {
       print('❌ Error: $e');
       setState(() {
-        _uploadStatus = "❌ Error: $e";
+        _uploadStatus = "❌ Error: ${e.toString()}";
         _imageName = '';
         _labels = [];
       });
     }
+  }
+
+  // ✅ Manual reconnect method
+  void _manualReconnect() {
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    _connectToWebSocket(settingsProvider.api);
+    setState(() {
+      _uploadStatus = "🔄 Reconnecting...";
+    });
   }
 
   @override
@@ -241,15 +294,21 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
       builder: (context, settingsProvider, child) {
         if (settingsProvider.isLoading) {
           return Scaffold(
-            appBar: AppBar(title: Text('Camera Multipart Upload')),
+            appBar: AppBar(title: Text('Camera WebSocket Stream')),
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('Camera Multipart Upload'),
+            title: Text('Camera WebSocket Stream'),
             actions: [
+              // ✅ WebSocket reconnect button
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: _manualReconnect,
+                tooltip: 'Reconnect WebSocket',
+              ),
               IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
@@ -292,6 +351,13 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
                                   Icons.timer, Colors.purple),
                               _buildStatusItem('Captures', '$_captureCount', 
                                   Icons.camera_alt, Colors.red),
+                              // ✅ Add WebSocket status
+                              _buildStatusItem(
+                                'WebSocket', 
+                                _socketService.isConnected ? 'Connected' : 'Disconnected', 
+                                _socketService.isConnected ? Icons.wifi : Icons.wifi_off,
+                                _socketService.isConnected ? Colors.green : Colors.red,
+                              ),
                             ],
                           ),
                         ),
@@ -314,7 +380,43 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
                         // 📷 Camera Preview
                         Expanded(
                           flex: 3,
-                          child: CameraPreview(_controller!),
+                          child: Stack(
+                            children: [
+                              CameraPreview(_controller!),
+                              // ✅ Overlay connection status
+                              if (!_socketService.isConnected)
+                                Container(
+                                  color: Colors.black54,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.wifi_off, size: 50, color: Colors.red),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'WebSocket Disconnected',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        ElevatedButton.icon(
+                                          onPressed: _manualReconnect,
+                                          icon: Icon(Icons.refresh),
+                                          label: Text('Reconnect'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.orange,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
 
                         // ℹ️ Upload Status + Info
@@ -328,6 +430,28 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // ✅ Connection status with color coding
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        _socketService.isConnected ? Icons.check_circle : Icons.error,
+                                        color: _socketService.isConnected ? Colors.green : Colors.red,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          "WebSocket: ${_socketService.isConnected ? 'Connected' : 'Disconnected'}",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: _socketService.isConnected ? Colors.green : Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
                                   Text("Status: $_uploadStatus",
                                       style: TextStyle(fontSize: 16)),
                                   SizedBox(height: 10),
@@ -335,17 +459,34 @@ class _CameraCapturePageState extends State<CameraCapturePage> with WidgetsBindi
                                       style: TextStyle(fontSize: 14)),
                                   SizedBox(height: 10),
                                   Text("Detected Labels:",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(fontWeight: FontWeight.bold)),
                                   SizedBox(height: 5),
                                   Wrap(
                                     spacing: 8,
                                     children: _labels.isEmpty
-                                        ? [Text("No cracks detected.")]
+                                        ? [Text("Waiting for server response...")]
                                         : _labels
-                                            .map((label) => Chip(label: Text(label)))
+                                            .map((label) => Chip(
+                                              label: Text(label),
+                                              backgroundColor: Colors.blue[100],
+                                            ))
                                             .toList(),
                                   ),
+                                  // ✅ Manual controls
+                                  if (!_socketService.isConnected)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: ElevatedButton.icon(
+                                        onPressed: _manualReconnect,
+                                        icon: Icon(Icons.refresh),
+                                        label: Text('Reconnect WebSocket'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          foregroundColor: Colors.white,
+                                          minimumSize: Size(double.infinity, 50),
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

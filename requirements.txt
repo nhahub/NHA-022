@@ -17,3 +17,4 @@ plotly
 cassandra-driver
 scipy
 pydeck
+flask_socketio
