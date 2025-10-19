@@ -1,0 +1,23 @@
+# EGY_PDD.yaml
+path: ../../data/EGY_PDD
+
+train: images/train
+val: images/val
+test: images/test
+
+# Number of classes
+nc: 11
+
+# Class names
+names:
+  0: Rutting
+  1: Reflective & Transverse Crack
+  2: Block Crack
+  3: Longitudinal Crack
+  4: Alligator Crack
+  5: Patching
+  6: Potholes
+  7: Bleeding
+  8: Corrugation
+  9: Raveling & Weathering
+  10: Bumps & Sags

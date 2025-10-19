@@ -3,20 +3,6 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql import functions as F
 import geopandas as gpd
-import shutil
-import os
-
-checkpoint_path = '/tmp/checkpoint1'
-
-# Check if the directory exists before trying to delete it
-if os.path.exists(checkpoint_path):
-    try:
-        shutil.rmtree(checkpoint_path)
-        print(f"Successfully deleted checkpoint directory: {checkpoint_path}")
-    except OSError as e:
-        print(f"Error: {e.strerror}. Failed to delete checkpoint directory: {checkpoint_path}")
-else:
-    print(f"Checkpoint directory does not exist: {checkpoint_path}")
 
 spark = SparkSession.builder \
     .appName("PavementEye Stream") \
@@ -28,13 +14,14 @@ spark = SparkSession.builder \
 kafka_bootstrap_servers = 'kafka:9092'  # kafka:9092 as we are inside the docker network
 kafka_topic = 'test' # Can be changed later
 
+
 # read data from Kafka
 kafka_stream_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", kafka_bootstrap_servers) \
     .option("subscribe", kafka_topic) \
-    .option("startingOffsets", "latest")\
     .load()
+
 
 # To be able to see the right parsed value of the message
 parse_kafka_stream = kafka_stream_df.selectExpr('CAST(value as STRING) as json_value')
@@ -90,9 +77,9 @@ df_no_nulls = exploded_df.na.drop()
 df_no_nulls = df_no_nulls.withColumn("timestamp", F.col("timestamp").cast(TimestampType()))
 
 # Now deduplicate only on the last 1 minutes
-cleaned_df = df_no_nulls \
-    .withWatermark("timestamp", "5 minute") \
-    .dropDuplicates(["lon", "lat", "label", "x1", "y1", "x2", "y2", "timestamp"])
+cleaned_df = df_no_nulls 
+#     .withWatermark("timestamp", "1 minutes") \
+#     .dropDuplicates(["label", "x1", "y1", "x2", "y2", "lon", "lat"])
 
 #Verify the correctness of the coordinates
 df_valid_coords = cleaned_df.filter(
@@ -133,6 +120,7 @@ def join_roads(lon, lat):
 
 join_roads = udf(join_roads, IntegerType())
 
+
 def get_dist(lon, lat):
     # Import necessary libraries inside the UDF for execution on workers
     import geopandas as gpd
@@ -156,6 +144,7 @@ def get_dist(lon, lat):
 
 get_dist = udf(get_dist, StringType())
 
+
 df_with_roads = df_valid_coords\
     .withColumn("road_index", join_roads(col("lon"), col("lat")))\
     .withColumn("dist", get_dist(col("lon"), col("lat")))
@@ -165,6 +154,17 @@ df_with_roads.writeStream\
     .outputMode("append")\
     .format("org.apache.spark.sql.cassandra")\
     .options(table="crack", keyspace="pavementeye")\
-    .option('checkpointLocation', checkpoint_path)\
+    .option('checkpointLocation', '/tmp/checkpoint40')\
     .start()\
     .awaitTermination()
+
+
+# This is for testing (printing in the notebook)
+# df_with_roads.writeStream\
+#     .outputMode("append")\
+#     .foreachBatch(lambda batch_df, batch_id: batch_df.show(truncate=False))\
+#     .start()\
+#     .awaitTermination()
+
+# See value at the docker logs
+# When request is made you can see the value
