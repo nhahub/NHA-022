@@ -14,9 +14,6 @@ app.config['SECRET_KEY'] = 'secret!'
 # init websocket server for streaming endpoints
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Create folders if not exists ------------------------------------------------------------
-os.makedirs('processed', exist_ok=True)
-
 # Just to test the backend is running ------------------------------------------------------
 @app.route('/', methods=['GET'])
 def root():

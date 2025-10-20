@@ -4,8 +4,8 @@ from ultralytics import YOLO
 from upload_to_datalake import upload_to_datalake
 from upload_to_osb import upload_to_s3_compatible
 
-# Load the model (Yolo v8s)
-model = YOLO("../models/yolo v8/YOLOv8_Small_RDD.pt")
+# Load the model (Yolo v8s) fine tuned version on EGY_PDD dataset
+model = YOLO("../models/fine_tunning/runs/main_trainging/yolov8s/weights/best.pt")
 
 def detect(nparr, lon, lat, time):
   # Decode the image using OpenCV
@@ -49,7 +49,7 @@ def detect(nparr, lon, lat, time):
     # Successfully working
     # If you want to push images that have cracks to Azure Data Lake
     # Just uncomment on real prodction or simple tests to avoid wasting the free plan
-    # upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
+    upload_to_datalake(image, f'raw/{lon}_{lat}_{time}.jpg')
 
     # If you want to push images that have cracks to OBS
     # upload_to_s3_compatible(image, f'raw/{lon}_{lat}_{time}.jpg')
