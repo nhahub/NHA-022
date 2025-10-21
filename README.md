@@ -50,7 +50,7 @@ We leverage our expertise in data science and data engineering to transform coll
 
 <div align="center">
   <img 
-  src="media/main.png" 
+  src="media/Untitled design (2).png" 
   alt="PavementEye Logo" 
   width="70%"/>
 </div>
