@@ -11,7 +11,7 @@ account_name = os.getenv("account_name")
 account_key = os.getenv("account_key")
 container_name = os.getenv("file_system_name")
 remote_folder = "raw"
-local_folder = "../data/caseStudy2"
+local_folder = "../data/caseStudy3"
 
 # Create client
 service_client = DataLakeServiceClient(

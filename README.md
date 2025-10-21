@@ -9,6 +9,32 @@
   />
 </div>
 
+## Repository Structure summary
+```bash
+PavementEye/
+│
+├── backend/          # Flask backend (API, logic, model loading)
+    │
+    └── app.py # start point of the backend
+├── streamlit/        # Streamlit dashboard (UI and visualization)
+    │
+    └── page 1.py # start point of streamlit dashboard    
+├── scripts/          # all scripts and commands used in the project
+    │
+    ├── run.ps1 # script to run the project
+    └── spark.py # start point of spark streaming   
+├── data/             # (most of them are hidden, only files needed for run are included)
+├── models/           # YOLO v8s models and fine tuning
+├── notebooks/        # Jupyter notebooks for analysis and temporary work
+├── flutter_application_1/
+├── media/
+    │
+    └── Technical_report_PavementEye.pdf
+├── docker-compose.yml 
+├── requirements.txt  # Project dependencies
+└── README.md         # Project overview and setup guide
+```
+
 ### What is PavementEye ?
 ##### Introduction
 Roads  are  the  most  widely  used  transportation method  around  the  world  at  present.  One  of the causes  of accidents on the roads  is road  distresses [1]. 
@@ -32,7 +58,7 @@ We leverage our expertise in data science and data engineering to transform coll
 ### Data Pipeline
 <div align="center">
   <img 
-  src="media/Flow Chart Whiteboard in Red Blue Basic Style.png" 
+  src="media/Flow Chart Whiteboard in Red Blue Basic Style (1).png" 
   alt="PavementEye Logo" 
   width="80%"
   />
@@ -64,65 +90,32 @@ As part of **"Huawei Developer Competition Northern Africa 2025"**, We used Huaw
 
 
 ## Steps to run the code
+The steps are so easy as we used commands to automate every thing:
 
-### Running Docker containers (Kafka, PySaprk, Cassandra)
-
-Clone the repository
+1. Clone the repository
 
 ```powershell
 git clone https://github.com/yahia997/PavementEye.git
 cd PavementEye
 ```
 
-Then to install docker images and run **for the first time.**
+2. Intsall required python libraries:
+```powershell
+pip install -r requirements.txt
+```
+
+3. Just type this in terminal and every thing will be ready:
+```powershell
+cd scripts
+./run.ps1
+```
 
 **Note: If you get an error that indicates `bitnami/spark:latest` was removed from docker hub, just change `bitnami/spark:latest` to `bitnamilegacy/spark:latest` in `compose.yaml` in the part of spark-master and spark-worker.**
 
 You can read more information about that here: https://hub.docker.com/r/bitnami/spark
 
-```powershell
-docker compose up
-```
 
-This will install and run the containers.
-
-If it is your not your first time to run the containers
-
-```powershell
-docker compose start
-```
-
-To stop the containers without deteting them
-
-```powershell
-docker compose stop
-```
-
-### Running the Flask API
-
-1. Download the trained Yolo v8 model from:
-https://github.com/oracl4/RoadDamageDetection/tree/main/models
-
-**Note:** Put the model in the right place: `models\yolo v8`. Then the file should be as `models/yolo v8/YOLOv8_Small_RDD.pt`.
-
-2. Download the required python libraries:
-```powershell
-pip install -r requirements.txt
-```
-
-3. Run the backend **(Ensure that you ran the docker containers first)**
-```powershell
-cd backend
-python app.py
-```
-
-4. To access the dashboard to see the visualizations, In another terminal tab:
-```powershell
-cd streamlit
-streamlit run "page 1.py"
-```
-
-**Note:** If you want to test cloud storage for images please contact yahiamahmoood333@gmail.com to get access credentials that are in `.env` file.
+**Note:** If you want to test cloud storage for images storage please contact yahiamahmoood333@gmail.com to get access credentials that are in hidden `.env` file.
 
 ## References
 [1]: Huang, Y.-H., & Zhang, Q.-Y., “A review of the causes and
@@ -137,3 +130,8 @@ No. 1, pp. 1-10, 2017.
 [3]: Road Damage Detection Using Deep Neural Networks with
 Images Captured Through a Smartphone, 2 Related Works
 2.1 Road Damage Detection, Page 2
+
+[4]: M. F. Abdelkader, M. A. Hedeya, E. Samir, A. A.
+El-Sharkawy, R. F. Abdel-Kader, A. Moussa, and E. ElSayed, “Egy pdd: a comprehensive multi-sensor benchmark dataset for accurate pavement distress detection and
+classification,” Multimedia Tools and Applications, vol. 84,
+pp. 38509–38544, Sep 2025.
